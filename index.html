@@ -1,1 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemetaan Kurikulum Informatika</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            padding: 20px; 
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 { text-align: center; margin-bottom: 5px; color: #2c3e50; }
+        h3 { text-align: center; margin-top: 0; color: #7f8c8d; margin-bottom: 20px; }
+        
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            margin-top: 20px; 
+            font-size: 14px;
+        }
+        th, td { 
+            border: 1px solid #e0e0e0; 
+            padding: 12px; 
+            text-align: left; 
+            vertical-align: top;
+        }
+        th { 
+            background-color: #3498db; 
+            color: white; 
+            position: sticky;
+            top: 0;
+        }
+        tr:nth-child(even) { background-color: #f8f9fa; }
+        tr:hover { background-color: #f1f8ff; }
+        
+        /* Mengatur lebar kolom agar proporsional */
+        th:nth-child(1) { width: 5%; }  /* Kelas */
+        th:nth-child(2) { width: 10%; } /* Elemen */
+        th:nth-child(3) { width: 25%; } /* Tujuan Pembelajaran */
+        th:nth-child(4) { width: 15%; } /* Materi */
+        th:nth-child(5) { width: 35%; } /* Rincian Materi */
+        th:nth-child(6) { width: 10%; } /* Pertemuan */
 
+        #loading { text-align:center; font-style: italic; color: #666; margin: 20px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Pemetaan Materi & Tujuan Pembelajaran Informatika</h2>
+    <h3>SMPN 4 Rangkasbitung</h3>
+    
+    <div id="loading">Menghubungkan ke database Spreadsheet...</div>
+    
+    <div style="overflow-x: auto;">
+        <table id="dataTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Kelas</th>
+                    <th>Elemen</th>
+                    <th>Tujuan Pembelajaran</th>
+                    <th>Materi</th>
+                    <th>Rincian Materi</th>
+                    <th>Pertemuan</th>
+                </tr>
+            </thead>
+            <tbody id="dataBody">
+                <!-- Data dari Spreadsheet akan masuk ke sini -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // MASUKKAN URL DEPLOYMENT APPS SCRIPT ANDA DI SINI
+    const scriptUrl = 'https://docs.google.com/spreadsheets/d/1RGhtxqQ4qrzkpQaJmQ8W7U_9JECk8Hbf7M2JbeohQvk/edit?gid=0#gid=0';
+
+    fetch(scriptUrl)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dataTable').style.display = 'table';
+
+            const tbody = document.getElementById('dataBody');
+            
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                
+                // Karena beberapa header menggunakan spasi (misal: "Tujuan Pembelajaran"),
+                // pemanggilannya wajib menggunakan format row['Nama Header']
+                tr.innerHTML = `
+                    <td>${row['Kelas'] || '-'}</td>
+                    <td>${row['Elemen'] || '-'}</td>
+                    <td>${row['Tujuan Pembelajaran'] || '-'}</td>
+                    <td>${row['Materi'] || '-'}</td>
+                    <td>${row['Rincian Materi'] || '-'}</td>
+                    <td>${row['Pertemuan'] || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('loading').innerHTML = '<span style="color:red;">Gagal memuat data. Pastikan URL Apps Script benar dan aksesnya "Anyone".</span>';
+        });
+</script>
+</body>
+</html>
