@@ -3,106 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Materi Informatika</title>
+    <title>Pemetaan Kurikulum Informatika</title>
+    <!-- Import Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            padding: 20px; 
-            background-color: #f9f9f9;
-            color: #333;
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3a53d0;
+            --success: #2ecc71;
+            --success-hover: #27ae60;
+            --bg-color: #f4f7fe;
+            --text-main: #2b3674;
+            --text-muted: #a3aed1;
+            --border: #e2e8f0;
         }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            padding: 20px; 
+            background-color: var(--bg-color);
+            color: #333;
+            margin: 0;
+        }
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            animation: slideUp 0.5s ease-out;
         }
         
-        /* Merapatkan jarak antara judul dan sub-judul */
-        h2 { text-align: center; margin-bottom: 0; color: #2c3e50; }
-        h3 { text-align: center; margin-top: 5px; color: #7f8c8d; margin-bottom: 25px; }
+        /* Jarak judul dan sub-judul dirapatkan */
+        h2 { text-align: center; margin-bottom: 0; color: var(--text-main); font-weight: 700; }
+        h3 { text-align: center; margin-top: 5px; color: var(--text-muted); margin-bottom: 25px; font-weight: 500; }
         
         .controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
+            gap: 15px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .filter-group {
+            display: flex;
             gap: 10px;
+            flex-grow: 1;
+        }
+
+        select, input {
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
         }
 
         #searchInput {
-            padding: 10px;
-            width: 100%;
-            max-width: 300px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
+            flex-grow: 1;
+            max-width: 400px;
         }
 
         .btn-copy {
-            padding: 10px 15px;
-            background-color: #27ae60;
+            padding: 12px 20px;
+            background-color: var(--success);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: bold;
-            transition: background 0.3s;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
         }
 
         .btn-copy:hover {
-            background-color: #219150;
+            background-color: var(--success-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-copy:active {
+            transform: translateY(0);
+        }
+
+        /* Styling Tabel */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 0 1px var(--border);
         }
 
         table { 
             border-collapse: collapse; 
             width: 100%; 
             font-size: 14px;
+            background: white;
         }
+        
         th, td { 
-            border: 1px solid #e0e0e0; 
-            padding: 12px; 
+            padding: 15px; 
             text-align: left; 
             vertical-align: top;
+            border-bottom: 1px solid var(--border);
         }
+        
         th { 
-            background-color: #3498db; 
+            background-color: var(--primary); 
             color: white; 
             position: sticky;
             top: 0;
+            font-weight: 600;
+            white-space: nowrap;
         }
-        tr:nth-child(even) { background-color: #f8f9fa; }
-        tr:hover { background-color: #f1f8ff; }
+
+        tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tr:hover td { 
+            background-color: #f8faff; 
+        }
         
-        th:nth-child(1) { width: 5%; }
-        th:nth-child(2) { width: 10%; }
-        th:nth-child(3) { width: 25%; }
+        /* Lebar Kolom */
+        th:nth-child(1) { width: 8%; }
+        th:nth-child(2) { width: 12%; }
+        th:nth-child(3) { width: 20%; }
         th:nth-child(4) { width: 15%; }
         th:nth-child(5) { width: 35%; }
         th:nth-child(6) { width: 10%; }
 
-        #loading { text-align:center; font-style: italic; color: #666; margin: 20px 0; }
+        /* Animasi Loading Spinner */
+        .loader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        /* Keyframes Animasi */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInRow {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .fade-in {
+            animation: fadeInRow 0.4s ease-out forwards;
+            opacity: 0;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Pemetaan Materi & Tujuan Pembelajaran</h2>
-    <h3>Informatika - Subrayon 1 Lebak</h3>
+    <h3>Informatika SMPN 4 Rangkasbitung</h3>
     
-    <!-- Bagian Kontrol: Input Pencarian dan Tombol Copy -->
     <div class="controls" id="controls" style="display: none;">
-        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari materi, kelas, atau elemen...">
-        <button class="btn-copy" onclick="copyTable()">📋 Salin Tabel</button>
+        <div class="filter-group">
+            <!-- Dropdown khusus untuk filter Kelas (Exact Match) -->
+            <select id="classSelect" onchange="filterTable()">
+                <option value="ALL">Semua Kelas</option>
+                <option value="VII">Kelas VII</option>
+                <option value="VIII">Kelas VIII</option>
+                <option value="IX">Kelas IX</option>
+            </select>
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari elemen, materi, atau tujuan...">
+        </div>
+        <button class="btn-copy" onclick="copyTable()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+            Salin Tabel
+        </button>
     </div>
 
-    <div id="loading">Menghubungkan ke database...</div>
+    <!-- Tampilan Loading Animasi -->
+    <div id="loading" class="loader-container">
+        <div class="spinner"></div>
+        <div style="color: #666; font-size: 14px;">Menghubungkan ke Spreadsheet...</div>
+    </div>
     
-    <div style="overflow-x: auto;">
+    <div class="table-responsive">
         <table id="dataTable" style="display:none;">
             <thead>
                 <tr>
@@ -115,7 +235,7 @@
                 </tr>
             </thead>
             <tbody id="dataBody">
-                <!-- Data dari Spreadsheet akan masuk ke sini -->
+                <!-- Data masuk ke sini -->
             </tbody>
         </table>
     </div>
@@ -123,9 +243,8 @@
 
 <script>
     // MASUKKAN URL DEPLOYMENT APPS SCRIPT ANDA DI SINI
-    const scriptUrl = 'https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnThdBPBIf1OhTalUNtDOC_3JleJzwnBpQ_0LMbTSG7plm9WfUj00GV5VwZk11hnAV7uNH7eQOTMKbmqHa_OBmC_RxPE0bhWyEYk3BdWyFQoQm9WZo56dU8BWSs5uoB2EaQNlpYOLKZIUpe6W5nTZ9bNAV0kEoWdpPPFjTFcUuAXH3cx7V-5z6NM-Ex_66rD02obMIvtC9Z6ILkXU_-_3Egn5-x2C9PNQIYAF3RWJEYEQA9JQfU7SFDUySCmHxbbRN5iXkk6UzcRdpFBSCo3kLrpp0cN7g&lib=MZ-yfRWbZ8m7YYOVDnaVUCE3iIui6l5-3';
+    const scriptUrl = 'URL_WEB_APP_ANDA_DISINI';
 
-    // Mengambil data dari Apps Script
     fetch(scriptUrl)
         .then(response => response.json())
         .then(data => {
@@ -135,8 +254,12 @@
 
             const tbody = document.getElementById('dataBody');
             
-            data.forEach(row => {
+            data.forEach((row, index) => {
                 const tr = document.createElement('tr');
+                // Menambahkan class animasi dan mengatur delay berurutan
+                tr.className = 'fade-in';
+                tr.style.animationDelay = `${index * 0.05}s`; 
+
                 tr.innerHTML = `
                     <td>${row['Kelas'] || '-'}</td>
                     <td>${row['Elemen'] || '-'}</td>
@@ -150,20 +273,38 @@
         })
         .catch(error => {
             console.error('Error:', error);
-            document.getElementById('loading').innerHTML = '<span style="color:red;">Gagal memuat data. Pastikan URL Apps Script benar dan aksesnya "Anyone".</span>';
+            document.getElementById('loading').innerHTML = '<span style="color:red; text-align:center;">Gagal memuat data. Periksa URL Apps Script Anda.</span>';
         });
 
-    // Fitur Filter/Pencarian
+    // Filter Logic yang diperbarui
     function filterTable() {
-        const input = document.getElementById("searchInput");
-        const filter = input.value.toLowerCase();
+        const classFilter = document.getElementById("classSelect").value;
+        const searchInput = document.getElementById("searchInput").value.toLowerCase();
         const table = document.getElementById("dataTable");
         const tr = table.getElementsByTagName("tr");
 
-        // Looping semua baris tabel, sembunyikan yang tidak cocok dengan query pencarian
         for (let i = 1; i < tr.length; i++) {
+            // Ambil data spesifik dari kolom Kelas (kolom index 0)
+            const tdClass = tr[i].getElementsByTagName("td")[0];
+            let classText = tdClass ? (tdClass.textContent || tdClass.innerText).trim() : "";
+            
+            // Ambil seluruh teks dalam baris untuk pencarian umum
             let rowText = tr[i].textContent || tr[i].innerText;
-            if (rowText.toLowerCase().indexOf(filter) > -1) {
+            
+            // Logika 1: Cek Dropdown Kelas (Exact Match)
+            let matchClass = false;
+            if (classFilter === "ALL" || classText.toUpperCase() === classFilter) {
+                matchClass = true;
+            }
+
+            // Logika 2: Cek Pencarian Teks Bebas
+            let matchSearch = false;
+            if (rowText.toLowerCase().indexOf(searchInput) > -1) {
+                matchSearch = true;
+            }
+
+            // Tampilkan jika KEDUANYA cocok
+            if (matchClass && matchSearch) {
                 tr[i].style.display = "";
             } else {
                 tr[i].style.display = "none";
@@ -171,23 +312,22 @@
         }
     }
 
-    // Fitur Copy Tabel
     function copyTable() {
         const table = document.getElementById("dataTable");
         const range = document.createRange();
         range.selectNode(table);
         
-        window.getSelection().removeAllRanges(); // Bersihkan seleksi sebelumnya
-        window.getSelection().addRange(range);   // Seleksi seluruh tabel
+        window.getSelection().removeAllRanges(); 
+        window.getSelection().addRange(range);   
         
         try {
-            document.execCommand("copy");        // Salin ke clipboard
-            alert("Tabel berhasil disalin! Anda bisa mem-paste data ini ke Excel atau Word.");
+            document.execCommand("copy");        
+            alert("Tabel berhasil disalin!");
         } catch (err) {
-            alert("Maaf, browser Anda tidak mendukung fitur copy otomatis.");
+            alert("Browser Anda tidak mendukung fitur copy otomatis.");
         }
         
-        window.getSelection().removeAllRanges(); // Hilangkan highlight biru setelah dicopy
+        window.getSelection().removeAllRanges();
     }
 </script>
 </body>
