@@ -1,1 +1,359 @@
-test
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemetaan Kurikulum Informatika</title>
+    <!-- Import Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-hover: #3a53d0;
+            --success: #2ecc71;
+            --success-hover: #27ae60;
+            --bg-color: #f4f7fe;
+            --text-main: #2b3674;
+            --text-muted: #a3aed1;
+            --border: #e2e8f0;
+        }
+
+        /* PERBAIKAN 1: Memastikan padding tidak menambah lebar elemen */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            padding: 20px; 
+            background-color: var(--bg-color);
+            color: #333;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            animation: slideUp 0.5s ease-out;
+            /* PERBAIKAN 2: Mencegah container tumpah di layar sangat kecil */
+            width: 100%; 
+            overflow-x: hidden;
+        }
+        
+        h2 { text-align: center; margin-bottom: 0; color: var(--text-main); font-weight: 700; }
+        h3 { text-align: center; margin-top: 5px; color: var(--text-muted); margin-bottom: 25px; font-weight: 500; }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-grow: 1;
+            flex-wrap: wrap; /* Memastikan elemen bisa turun ke bawah jika sempit */
+        }
+
+        select, input {
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: all 0.3s ease;
+            width: 100%; /* Default 100% untuk responsivitas */
+        }
+
+        select {
+            width: auto; /* Dropdown menyesuaikan isinya di layar besar */
+            min-width: 150px;
+        }
+
+        #searchInput {
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        }
+
+        .btn-copy {
+            padding: 12px 20px;
+            background-color: var(--success);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
+            white-space: nowrap;
+        }
+
+        .btn-copy:hover {
+            background-color: var(--success-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(46, 204, 113, 0.3);
+        }
+
+        .btn-copy:active {
+            transform: translateY(0);
+        }
+
+        /* PERBAIKAN 3: Media Query untuk HP (Mobile) */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px; /* Padding bodi lebih kecil di HP */
+            }
+            .container {
+                padding: 15px;
+            }
+            .controls {
+                flex-direction: column;
+                align-items: stretch; /* Membuat elemen memenuhi lebar container */
+            }
+            .filter-group {
+                flex-direction: column; /* Dropdown dan Input susun bawah */
+                width: 100%;
+            }
+            select, #searchInput, .btn-copy {
+                width: 100%;
+                max-width: 100%; /* Menghilangkan batasan lebar */
+            }
+        }
+
+        /* Styling Tabel */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 0 1px var(--border);
+        }
+
+        table { 
+            border-collapse: collapse; 
+            width: 100%; 
+            font-size: 14px;
+            background: white;
+            min-width: 600px; /* Memastikan tabel tidak terlalu hancur di HP (bisa di-scroll horizontal) */
+        }
+        
+        th, td { 
+            padding: 15px; 
+            text-align: left; 
+            vertical-align: top;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th { 
+            background-color: var(--primary); 
+            color: white; 
+            position: sticky;
+            top: 0;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tr:hover td { 
+            background-color: #f8faff; 
+        }
+        
+        /* Animasi Loading */
+        .loader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInRow {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .fade-in {
+            animation: fadeInRow 0.4s ease-out forwards;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" class="btn-back">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Kembali ke Portal
+    </a>
+
+    <h2>Pemetaan Materi & Tujuan Pembelajaran</h2>
+    <h3>Informatika SMPN 4 Rangkasbitung</h3>
+    
+    <div class="controls" id="controls" style="display: none;">
+        <div class="filter-group">
+            <select id="classSelect" onchange="filterTable()">
+                <option value="ALL">Semua Kelas</option>
+                <option value="VII">Kelas VII</option>
+                <option value="VIII">Kelas VIII</option>
+                <option value="IX">Kelas IX</option>
+            </select>
+            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari elemen, materi, atau tujuan...">
+        </div>
+        <button class="btn-copy" onclick="copyTable()">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+            Salin Tabel
+        </button>
+    </div>
+
+    <div id="loading" class="loader-container">
+        <div class="spinner"></div>
+        <div style="color: #666; font-size: 14px;">Menghubungkan ke Spreadsheet...</div>
+    </div>
+    
+    <div class="table-responsive">
+        <table id="dataTable" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Kelas</th>
+                    <th>Elemen</th>
+                    <th>Tujuan Pembelajaran</th>
+                    <th>Materi</th>
+                    <th>Rincian Materi</th>
+                    <th>Pertemuan</th>
+                </tr>
+            </thead>
+            <tbody id="dataBody">
+                <!-- Data masuk ke sini -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // GANTI URL INI DENGAN URL APPS SCRIPT ANDA
+    const scriptUrl ='https://script.google.com/macros/s/AKfycbwiB_QcOjvU-vb0TPmAtNJYPd1KvC74_R0oNLUtUfNpCuwIimSTURMSWMRHcZWeTXcI/exec';
+    fetch(scriptUrl)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dataTable').style.display = 'table';
+            document.getElementById('controls').style.display = 'flex';
+
+            const tbody = document.getElementById('dataBody');
+            
+            data.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.className = 'fade-in';
+                tr.style.animationDelay = `${index * 0.05}s`; 
+
+                tr.innerHTML = `
+                    <td>${row['Kelas'] || '-'}</td>
+                    <td>${row['Elemen'] || '-'}</td>
+                    <td>${row['Tujuan Pembelajaran'] || '-'}</td>
+                    <td>${row['Materi'] || '-'}</td>
+                    <td>${row['Rincian Materi'] || '-'}</td>
+                    <td>${row['Pertemuan'] || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('loading').innerHTML = '<span style="color:red; text-align:center;">Gagal memuat data. Periksa URL Apps Script Anda.</span>';
+        });
+
+    function filterTable() {
+        const classFilter = document.getElementById("classSelect").value;
+        const searchInput = document.getElementById("searchInput").value.toLowerCase();
+        const table = document.getElementById("dataTable");
+        const tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+            const tdClass = tr[i].getElementsByTagName("td")[0];
+            let classText = tdClass ? (tdClass.textContent || tdClass.innerText).trim() : "";
+            
+            let rowText = tr[i].textContent || tr[i].innerText;
+            
+            let matchClass = false;
+            if (classFilter === "ALL" || classText.toUpperCase() === classFilter) {
+                matchClass = true;
+            }
+
+            let matchSearch = false;
+            if (rowText.toLowerCase().indexOf(searchInput) > -1) {
+                matchSearch = true;
+            }
+
+            if (matchClass && matchSearch) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+
+    function copyTable() {
+        const table = document.getElementById("dataTable");
+        const range = document.createRange();
+        range.selectNode(table);
+        
+        window.getSelection().removeAllRanges(); 
+        window.getSelection().addRange(range);   
+        
+        try {
+            document.execCommand("copy");        
+            alert("Tabel berhasil disalin!");
+        } catch (err) {
+            alert("Browser Anda tidak mendukung fitur copy otomatis.");
+        }
+        
+        window.getSelection().removeAllRanges();
+    }
+</script>
+</body>
+</html>
