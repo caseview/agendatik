@@ -19,6 +19,11 @@
             --border: #e2e8f0;
         }
 
+        /* PERBAIKAN 1: Memastikan padding tidak menambah lebar elemen */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         body { 
             font-family: 'Poppins', sans-serif; 
             padding: 20px; 
@@ -35,9 +40,11 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             animation: slideUp 0.5s ease-out;
+            /* PERBAIKAN 2: Mencegah container tumpah di layar sangat kecil */
+            width: 100%; 
+            overflow-x: hidden;
         }
         
-        /* Jarak judul dan sub-judul dirapatkan */
         h2 { text-align: center; margin-bottom: 0; color: var(--text-main); font-weight: 700; }
         h3 { text-align: center; margin-top: 5px; color: var(--text-muted); margin-bottom: 25px; font-weight: 500; }
         
@@ -57,6 +64,7 @@
             display: flex;
             gap: 10px;
             flex-grow: 1;
+            flex-wrap: wrap; /* Memastikan elemen bisa turun ke bawah jika sempit */
         }
 
         select, input {
@@ -67,16 +75,22 @@
             font-family: 'Poppins', sans-serif;
             outline: none;
             transition: all 0.3s ease;
+            width: 100%; /* Default 100% untuk responsivitas */
         }
 
-        select:focus, input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+        select {
+            width: auto; /* Dropdown menyesuaikan isinya di layar besar */
+            min-width: 150px;
         }
 
         #searchInput {
             flex-grow: 1;
             max-width: 400px;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
         }
 
         .btn-copy {
@@ -92,8 +106,10 @@
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
+            white-space: nowrap;
         }
 
         .btn-copy:hover {
@@ -104,6 +120,28 @@
 
         .btn-copy:active {
             transform: translateY(0);
+        }
+
+        /* PERBAIKAN 3: Media Query untuk HP (Mobile) */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px; /* Padding bodi lebih kecil di HP */
+            }
+            .container {
+                padding: 15px;
+            }
+            .controls {
+                flex-direction: column;
+                align-items: stretch; /* Membuat elemen memenuhi lebar container */
+            }
+            .filter-group {
+                flex-direction: column; /* Dropdown dan Input susun bawah */
+                width: 100%;
+            }
+            select, #searchInput, .btn-copy {
+                width: 100%;
+                max-width: 100%; /* Menghilangkan batasan lebar */
+            }
         }
 
         /* Styling Tabel */
@@ -118,6 +156,7 @@
             width: 100%; 
             font-size: 14px;
             background: white;
+            min-width: 600px; /* Memastikan tabel tidak terlalu hancur di HP (bisa di-scroll horizontal) */
         }
         
         th, td { 
@@ -144,15 +183,7 @@
             background-color: #f8faff; 
         }
         
-        /* Lebar Kolom */
-        th:nth-child(1) { width: 8%; }
-        th:nth-child(2) { width: 12%; }
-        th:nth-child(3) { width: 20%; }
-        th:nth-child(4) { width: 15%; }
-        th:nth-child(5) { width: 35%; }
-        th:nth-child(6) { width: 10%; }
-
-        /* Animasi Loading Spinner */
+        /* Animasi Loading */
         .loader-container {
             display: flex;
             flex-direction: column;
@@ -171,7 +202,6 @@
             margin-bottom: 15px;
         }
 
-        /* Keyframes Animasi */
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -201,7 +231,6 @@
     
     <div class="controls" id="controls" style="display: none;">
         <div class="filter-group">
-            <!-- Dropdown khusus untuk filter Kelas (Exact Match) -->
             <select id="classSelect" onchange="filterTable()">
                 <option value="ALL">Semua Kelas</option>
                 <option value="VII">Kelas VII</option>
@@ -216,7 +245,6 @@
         </button>
     </div>
 
-    <!-- Tampilan Loading Animasi -->
     <div id="loading" class="loader-container">
         <div class="spinner"></div>
         <div style="color: #666; font-size: 14px;">Menghubungkan ke Spreadsheet...</div>
@@ -242,9 +270,8 @@
 </div>
 
 <script>
-    // MASUKKAN URL DEPLOYMENT APPS SCRIPT ANDA DI SINI
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwiB_QcOjvU-vb0TPmAtNJYPd1KvC74_R0oNLUtUfNpCuwIimSTURMSWMRHcZWeTXcI/exec';
-
+    // GANTI URL INI DENGAN URL APPS SCRIPT ANDA
+    const scriptUrl ='https://script.google.com/macros/s/AKfycbwiB_QcOjvU-vb0TPmAtNJYPd1KvC74_R0oNLUtUfNpCuwIimSTURMSWMRHcZWeTXcI/exec';
     fetch(scriptUrl)
         .then(response => response.json())
         .then(data => {
@@ -256,7 +283,6 @@
             
             data.forEach((row, index) => {
                 const tr = document.createElement('tr');
-                // Menambahkan class animasi dan mengatur delay berurutan
                 tr.className = 'fade-in';
                 tr.style.animationDelay = `${index * 0.05}s`; 
 
@@ -276,7 +302,6 @@
             document.getElementById('loading').innerHTML = '<span style="color:red; text-align:center;">Gagal memuat data. Periksa URL Apps Script Anda.</span>';
         });
 
-    // Filter Logic yang diperbarui
     function filterTable() {
         const classFilter = document.getElementById("classSelect").value;
         const searchInput = document.getElementById("searchInput").value.toLowerCase();
@@ -284,26 +309,21 @@
         const tr = table.getElementsByTagName("tr");
 
         for (let i = 1; i < tr.length; i++) {
-            // Ambil data spesifik dari kolom Kelas (kolom index 0)
             const tdClass = tr[i].getElementsByTagName("td")[0];
             let classText = tdClass ? (tdClass.textContent || tdClass.innerText).trim() : "";
             
-            // Ambil seluruh teks dalam baris untuk pencarian umum
             let rowText = tr[i].textContent || tr[i].innerText;
             
-            // Logika 1: Cek Dropdown Kelas (Exact Match)
             let matchClass = false;
             if (classFilter === "ALL" || classText.toUpperCase() === classFilter) {
                 matchClass = true;
             }
 
-            // Logika 2: Cek Pencarian Teks Bebas
             let matchSearch = false;
             if (rowText.toLowerCase().indexOf(searchInput) > -1) {
                 matchSearch = true;
             }
 
-            // Tampilkan jika KEDUANYA cocok
             if (matchClass && matchSearch) {
                 tr[i].style.display = "";
             } else {
